@@ -1,7 +1,5 @@
 package Solitaire;
 
-import java.nio.channels.AlreadyBoundException;
-
 public class Grille {
 	
 	private String[][] plateau;
@@ -35,10 +33,10 @@ public class Grille {
 		return resultat;
 	}
 	
-	public Case getCase(Grille plateau, int abs, int ord)
+	public Case getCase(Grille plateau, int ord, int abs)
 	{
 		int valeur = 0;
-		String typeCase = plateau.plateau[abs][ord];
+		String typeCase = plateau.plateau[ord][abs];
 		if (typeCase == "   ")
 			valeur = -1;
 		else
@@ -46,7 +44,7 @@ public class Grille {
 				valeur = 0;
 			else
 				valeur = 1;
-		Case caseCible = new Case(abs, ord, valeur);
+		Case caseCible = new Case(ord, abs, valeur);
 		return caseCible;
 	}
 	
@@ -77,11 +75,6 @@ public class Grille {
 			return caseInterdite;
 	}
 	
-	public boolean autoriserDeplacement(Grille plateau, Case caseD, Case caseA)
-	{
-		return plateau.autoriserDepart(caseD) && plateau.autoriserArrive(caseD, caseA) && plateau.caseDuMilieu(plateau, caseD, caseA).getValeur() == 1;
-	}
-	
 	public boolean autoriserArrive(Case caseD, Case caseA)
 	{
 		boolean libre = (caseA.getValeur() == 0);
@@ -92,6 +85,11 @@ public class Grille {
 		boolean absDif1 = (caseD.getAbscisse() == caseA.getAbscisse() - 2);
 		boolean absDif2 = (caseD.getAbscisse() == caseA.getAbscisse() + 2);
 		return libre && ((memeAbs && (ordDif1 || ordDif2)) || (memeOrd && (absDif1 || absDif2)));
+	}
+	
+	public boolean autoriserDeplacement(Grille plateau, Case caseD, Case caseA)
+	{
+		return plateau.autoriserDepart(caseD) && plateau.autoriserArrive(caseD, caseA) && plateau.caseDuMilieu(plateau, caseD, caseA).getValeur() == 1;
 	}
 	
 	public String stringCase(int i, int j)
@@ -120,6 +118,8 @@ public class Grille {
 	
 	public Grille deplacement(Grille plateau, Case caseD, Case caseA)
 	{
+		String[][] plateau2 = null;
+		Grille erreurPlateau = new Grille(plateau2);
 		if (plateau.autoriserDeplacement(plateau, caseD, caseA))
 		{
 			String[][] plateau1 = plateau.getPlateau();
@@ -132,50 +132,84 @@ public class Grille {
 			plateau.setPlateau(plateau1);
 			return plateau;
 		}
-		return null;
+		else
+			return erreurPlateau;
 	}
 	
-	public void unCoup (Grille plateau, int absD, int ordD, int absA, int ordA)
+	public boolean comparable(Grille plateau1, Grille plateau2)
+	{
+		try{
+			
+		boolean compare = true;
+		String[][] plateauA = plateau1.getPlateau();
+		String[][] plateauB = plateau2.getPlateau();
+		for (int i = 0; i < DIMENSION - 1; i++) {
+			for (int j = 0; j < DIMENSION - 1; j++){
+				if (plateauA[i][j] != plateauB[i][j])
+						compare = false;
+			}
+		}
+		return compare;
+		}
+		catch (NullPointerException e)
+		{
+			return false;
+		}
+	}
+	
+	public void unCoup (Grille plateau, int ordD, int absD, int ordA, int absA)
 	{
 		try
 		{
-			Case caseD = plateau.getCase(plateau, absD, ordD);
-			Case caseA = plateau.getCase(plateau, absA, ordA);
-			System.out.println(plateau.deplacement(plateau, caseD, caseA).toString(plateau));
+		Case caseD = plateau.getCase(plateau, ordD, absD);
+		Case caseA = plateau.getCase(plateau, ordA, absA);
+		if (!autoriserDepart(caseD))
+			System.out.println("Choissisez une nouvelle case de départ.");
+		else
+			if (!autoriserArrive(caseD, caseA))
+				System.out.println("Choississez une autre case d'arrivée");
+			else
+				if (caseDuMilieu(plateau, caseD, caseA).getValeur() != 1)
+					System.out.println("Vous devez sauter une bille.");
+					else
+						System.out.println(plateau.deplacement(plateau, caseD, caseA).toString(plateau));
 		}
-		catch(AlreadyBoundException e)
+		catch (ArrayIndexOutOfBoundsException e)
 		{
-			System.out.println("deplacement non autorisé");
-		} 
+			System.out.println("Restez à l'intérieur du plateau.");
+		}
 	}
 
 	public static void main(String[] args) 
 	{
-		int ordD, absD, ordA, absA;
+		
 		String[][] plateau = null;
 		Grille plateau1 = new Grille(plateau);
 		
 		plateau1.initGrille();
+		System.out.println(plateau1.toString(plateau1));
 		
-		ordD = 4;
-		absD = 6;
-		ordA = 4;
-		absA = 4;
-		plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		
-		/*Case caseD = plateau1.getCase(plateau1, 4, 6);
-		Case caseA = plateau1.getCase(plateau1, 4, 4);
-		System.out.println(plateau1.deplacement(plateau1, caseD, caseA).toString(plateau1));
-		
-		Case caseDD = plateau1.getCase(plateau1, 6, 5);
-		Case caseAA = plateau1.getCase(plateau1, 4, 5);
-		System.out.println(plateau1.deplacement(plateau1, caseDD, caseAA).toString(plateau1));
-		
-		Case caseDD1 = plateau1.getCase(plateau1, 6, 7);
-		Case caseAA1 = plateau1.getCase(plateau1, 6, 5);
-		System.out.println(plateau1.deplacement(plateau1, caseDD1, caseAA1).toString(plateau1));
-		*/
-		//System.out.println(plateau1.toString(plateau1));
+		/* Pour jour au solitaire, il suffit de mettre une bille : X dans une case vide : [ ] 
+		 * en passant par dessus une autre bille.
+		 * 
+		 * Pour ce faire, choisissez :
+		 * 
+		 * - l'ordonne et l'abscisse de la bille de départ : ordD et absD
+		 * - l'ordonne et l'abscisse de la bille d'arrivee : ordA et absA*/
+
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
 	}
 
 }
