@@ -5,8 +5,9 @@ import java.util.Scanner;
 public class Grille {
 	
 	private String[][] plateau;
-	public static final int DIMENSION = 11;
+	public static final int DIMENSION = 9;
 	Case case1;
+	private int billeRestante = 0;
 	
 	public String[][] getPlateau()
 	{
@@ -29,7 +30,7 @@ public class Grille {
 		for (int i = 0; i < DIMENSION + 1; i++) {
 			if (i < DIMENSION)
 				if (i < 10)
-					resultat += i +"  ";
+					resultat += i + "  ";
 				else
 					resultat += i + " ";
 			else
@@ -114,6 +115,7 @@ public class Grille {
 				{
 					case1 = new Case(i, j, 1);
 					plateau[i][j] = case1.toString();
+					billeRestante++;
 				}
 			}	
 		}
@@ -140,25 +142,30 @@ public class Grille {
 					{
 						case1 = new Case(i, j, 1);
 						plateau[i][j] = case1.toString();
+						billeRestante++;
 					}
 				}
 			}
 		}
 	}
-	
+
 	public Grille deplacement(Grille plateau, Case caseD, Case caseA)
 	{
 		String[][] plateau2 = null;
 		Grille erreurPlateau = new Grille(plateau2);
 		if (this.autoriserDeplacement(this, caseD, caseA))
 		{
+			billeRestante--;
 			String[][] plateau1 = this.getPlateau();
-			Case caseX = new Case(0, 0, 0);
 			Case caseM = plateau.caseDuMilieu(plateau, caseD, caseA);
-			plateau1[caseX.getAbscisse()][caseX.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
+			/*caseD.setLibre();
+			caseA.setOccupe();
+			caseM.setLibre();*/
+			plateau1[case1.getAbscisse()][case1.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
 			plateau1[caseD.getAbscisse()][caseD.getOrdonne()] = plateau1[caseA.getAbscisse()][caseA.getOrdonne()];
-			plateau1[caseA.getAbscisse()][caseA.getOrdonne()] = plateau1[caseX.getAbscisse()][caseX.getOrdonne()];
+			plateau1[caseA.getAbscisse()][caseA.getOrdonne()] = plateau1[case1.getAbscisse()][case1.getOrdonne()];
 			plateau1[caseM.getAbscisse()][caseM.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
+			
 			this.setPlateau(plateau1);
 			return plateau;
 		}
@@ -215,7 +222,12 @@ public class Grille {
 		@SuppressWarnings("resource")
 		Scanner s = new Scanner(System.in);
 		int rejouer = 0;
-		this.initGrille2();
+		System.out.println("Choississez votre plateau : (1 = carré / 2 = tablier anglais)");
+		int jeu = s.nextInt();
+		if (jeu == 1)
+			this.initGrille();
+		else
+			this.initGrille2();
 		System.out.println(this.toString(plateau));
 		System.out.println("voulez vous rejouer? (1 = oui / 2 = non)");
 		rejouer = s.nextInt();
@@ -238,7 +250,7 @@ public class Grille {
 			System.out.println("voulez vous rejouer? (1 = oui / 2 = non)");
 			rejouer = s.nextInt();
 		}
-		System.out.println("Game over");
+		System.out.println("Il vous reste " + billeRestante + " billes.");
 	}
 
 	public static void main(String[] args) 
