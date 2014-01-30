@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class Grille {
 	
 	private String[][] plateau;
-	public static final int DIMENSION = 9;
+	public static final int DIMENSION = 11;
 	Case case1;
 	
 	public String[][] getPlateau()
@@ -26,9 +26,22 @@ public class Grille {
 	public String toString(Grille plateau)
 	{
 		String resultat = "";
-		for (int i = 0; i < DIMENSION; i++) {
+		for (int i = 0; i < DIMENSION + 1; i++) {
+			if (i < DIMENSION)
+				if (i < 10)
+					resultat += i +"  ";
+				else
+					resultat += i + " ";
+			else
+				resultat += "   ";
 			for (int j = 0; j < DIMENSION; j++){
-				resultat += this.stringCase(i, j);
+				if (i < DIMENSION)
+					resultat += this.stringCase(i, j);
+				else
+					if (j < 10)
+						resultat += " " + j + " ";
+					else
+						resultat += " " + j;
 			}	
 			resultat += '\n';
 		}
@@ -58,21 +71,9 @@ public class Grille {
 	public Case caseDuMilieu(Grille plateau, Case caseD, Case caseA)
 	{
 		Case caseInterdite = new Case(0, 0, -1);
-		int caseDord = caseD.getOrdonne();
-		int caseDabs = caseD.getAbscisse();
-		int caseAord = caseA.getOrdonne();
-		int caseAabs = caseA.getAbscisse();
+		
 		if ((this.autoriserDepart(caseD)) && (this.autoriserArrive(caseD, caseA)))
-			if (caseDord > caseAord)
-				return this.getCase(this, caseDabs, caseDord - 1);
-			else
-				if (caseDabs > caseAabs)
-					return this.getCase(this, caseDabs - 1, caseDord);
-				else
-					if (caseDabs < caseAabs)
-						return this.getCase(this, caseDabs + 1, caseDord);
-					else
-						return this.getCase(this, caseDabs, caseDord + 1);
+			return this.getCase(this, ((caseD.getAbscisse() + caseA.getAbscisse()) / 2), ((caseD.getOrdonne() + caseA.getOrdonne()) / 2));
 		else
 			return caseInterdite;
 	}
@@ -115,6 +116,33 @@ public class Grille {
 					plateau[i][j] = case1.toString();
 				}
 			}	
+		}
+	}
+	
+	public void initGrille2()
+	{
+		plateau = new String [DIMENSION][DIMENSION];
+		for (int i = 0; i < DIMENSION; i++) {
+			for (int j = 0; j < DIMENSION; j++){
+				if (i == DIMENSION/2 && j == DIMENSION/2)
+				{
+					case1 = new Case(i, j, 0);
+					plateau[i][j] = case1.toString();
+				}
+				else
+				{
+					if (((i < DIMENSION / 3) && (j < DIMENSION / 3)) || ((i < DIMENSION / 3) && (j > DIMENSION - DIMENSION / 3 - 1)) || ((i > DIMENSION - DIMENSION / 3 - 1) && (j > DIMENSION - DIMENSION / 3 - 1)) || ((i > DIMENSION - DIMENSION / 3 - 1) && (j < DIMENSION / 3)))
+					{
+						case1 = new Case(i, j, -1);
+						plateau[i][j] = case1.toString();
+					}
+					else
+					{
+						case1 = new Case(i, j, 1);
+						plateau[i][j] = case1.toString();
+					}
+				}
+			}
 		}
 	}
 	
@@ -187,7 +215,7 @@ public class Grille {
 		@SuppressWarnings("resource")
 		Scanner s = new Scanner(System.in);
 		int rejouer = 0;
-		this.initGrille();
+		this.initGrille2();
 		System.out.println(this.toString(plateau));
 		System.out.println("voulez vous rejouer? (1 = oui / 2 = non)");
 		rejouer = s.nextInt();
