@@ -1,5 +1,7 @@
 package Solitaire;
 
+import java.util.Scanner;
+
 public class Grille {
 	
 	private String[][] plateau;
@@ -48,7 +50,7 @@ public class Grille {
 		return caseCible;
 	}
 	
-	public boolean autoriserDepart(Case caseD)
+	private boolean autoriserDepart(Case caseD)
 	{
 		return caseD.getValeur() == 1;
 	}
@@ -75,7 +77,7 @@ public class Grille {
 			return caseInterdite;
 	}
 	
-	public boolean autoriserArrive(Case caseD, Case caseA)
+	private boolean autoriserArrive(Case caseD, Case caseA)
 	{
 		boolean libre = (caseA.getValeur() == 0);
 		boolean memeAbs = (caseD.getAbscisse() == caseA.getAbscisse());
@@ -87,7 +89,7 @@ public class Grille {
 		return libre && ((memeAbs && (ordDif1 || ordDif2)) || (memeOrd && (absDif1 || absDif2)));
 	}
 	
-	public boolean autoriserDeplacement(Grille plateau, Case caseD, Case caseA)
+	private boolean autoriserDeplacement(Grille plateau, Case caseD, Case caseA)
 	{
 		return plateau.autoriserDepart(caseD) && plateau.autoriserArrive(caseD, caseA) && plateau.caseDuMilieu(plateau, caseD, caseA).getValeur() == 1;
 	}
@@ -136,7 +138,7 @@ public class Grille {
 			return erreurPlateau;
 	}
 	
-	public boolean comparable(Grille plateau1, Grille plateau2)
+	/*public boolean comparable(Grille plateau1, Grille plateau2)
 	{
 		try{
 			
@@ -155,7 +157,7 @@ public class Grille {
 		{
 			return false;
 		}
-	}
+	}*/
 	
 	public void unCoup (Grille plateau, int ordD, int absD, int ordA, int absA)
 	{
@@ -179,16 +181,40 @@ public class Grille {
 			System.out.println("Restez à l'intérieur du plateau.");
 		}
 	}
+	
+	public void jouer(Grille plateau)
+	{
+		@SuppressWarnings("resource")
+		Scanner s = new Scanner(System.in);
+		int rejouer = 0;
+		this.initGrille();
+		System.out.println(this.toString(plateau));
+		System.out.println("voulez vous rejouer? (1 = oui / 2 = non)");
+		rejouer = s.nextInt();
+		while (rejouer == 1)
+		{
+			System.out.println("entrez l'ordonné de départ : ");
+			int ordD = s.nextInt();
+		
+			System.out.println("entrez l'abscisse de départ : ");
+			int absD = s.nextInt();
+					
+			System.out.println("entrez l'ordonné d'arrivé : ");
+			int ordA = s.nextInt();
+					
+			System.out.println("entrez l'abscisse d'arrivé : ");
+			int absA = s.nextInt();
+		
+			this.unCoup(this, ordD, absD, ordA, absA);
+					
+			System.out.println("voulez vous rejouer? (1 = oui / 2 = non)");
+			rejouer = s.nextInt();
+		}
+		System.out.println("Game over");
+	}
 
 	public static void main(String[] args) 
 	{
-		
-		String[][] plateau = null;
-		Grille plateau1 = new Grille(plateau);
-		
-		plateau1.initGrille();
-		System.out.println(plateau1.toString(plateau1));
-		
 		/* Pour jour au solitaire, il suffit de mettre une bille : X dans une case vide : [ ] 
 		 * en passant par dessus une autre bille.
 		 * 
@@ -196,20 +222,11 @@ public class Grille {
 		 * 
 		 * - l'ordonne et l'abscisse de la bille de départ : ordD et absD
 		 * - l'ordonne et l'abscisse de la bille d'arrivee : ordA et absA*/
+		
+		String[][] plateau = null;
+		Grille plateau1 = new Grille(plateau);
 
-		plateau1.unCoup(plateau1, 6, 4, 4, 4);
-		plateau1.unCoup(plateau1, 33, 2, 3, 4);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		plateau1.jouer(plateau1);
 	}
 
 }
