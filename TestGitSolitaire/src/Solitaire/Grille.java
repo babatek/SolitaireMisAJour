@@ -26,7 +26,7 @@ public class Grille {
 		String resultat = "";
 		for (int i = 0; i < DIMENSION; i++) {
 			for (int j = 0; j < DIMENSION; j++){
-				resultat += plateau.stringCase(i, j);
+				resultat += this.stringCase(i, j);
 			}	
 			resultat += '\n';
 		}
@@ -36,7 +36,7 @@ public class Grille {
 	public Case getCase(Grille plateau, int ord, int abs)
 	{
 		int valeur = 0;
-		String typeCase = plateau.plateau[ord][abs];
+		String typeCase = this.plateau[ord][abs];
 		if (typeCase == "   ")
 			valeur = -1;
 		else
@@ -60,17 +60,17 @@ public class Grille {
 		int caseDabs = caseD.getAbscisse();
 		int caseAord = caseA.getOrdonne();
 		int caseAabs = caseA.getAbscisse();
-		if ((plateau.autoriserDepart(caseD)) && (plateau.autoriserArrive(caseD, caseA)))
+		if ((this.autoriserDepart(caseD)) && (this.autoriserArrive(caseD, caseA)))
 			if (caseDord > caseAord)
-				return plateau.getCase(plateau, caseDabs, caseDord - 1);
+				return this.getCase(this, caseDabs, caseDord - 1);
 			else
 				if (caseDabs > caseAabs)
-					return plateau.getCase(plateau, caseDabs - 1, caseDord);
+					return this.getCase(this, caseDabs - 1, caseDord);
 				else
 					if (caseDabs < caseAabs)
-						return plateau.getCase(plateau, caseDabs + 1, caseDord);
+						return this.getCase(this, caseDabs + 1, caseDord);
 					else
-						return plateau.getCase(plateau, caseDabs, caseDord + 1);
+						return this.getCase(this, caseDabs, caseDord + 1);
 		else
 			return caseInterdite;
 	}
@@ -120,16 +120,16 @@ public class Grille {
 	{
 		String[][] plateau2 = null;
 		Grille erreurPlateau = new Grille(plateau2);
-		if (plateau.autoriserDeplacement(plateau, caseD, caseA))
+		if (this.autoriserDeplacement(this, caseD, caseA))
 		{
-			String[][] plateau1 = plateau.getPlateau();
+			String[][] plateau1 = this.getPlateau();
 			Case caseX = new Case(0, 0, 0);
 			Case caseM = plateau.caseDuMilieu(plateau, caseD, caseA);
 			plateau1[caseX.getAbscisse()][caseX.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
 			plateau1[caseD.getAbscisse()][caseD.getOrdonne()] = plateau1[caseA.getAbscisse()][caseA.getOrdonne()];
 			plateau1[caseA.getAbscisse()][caseA.getOrdonne()] = plateau1[caseX.getAbscisse()][caseX.getOrdonne()];
 			plateau1[caseM.getAbscisse()][caseM.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
-			plateau.setPlateau(plateau1);
+			this.setPlateau(plateau1);
 			return plateau;
 		}
 		else
@@ -161,8 +161,8 @@ public class Grille {
 	{
 		try
 		{
-		Case caseD = plateau.getCase(plateau, ordD, absD);
-		Case caseA = plateau.getCase(plateau, ordA, absA);
+		Case caseD = this.getCase(plateau, ordD, absD);
+		Case caseA = this.getCase(plateau, ordA, absA);
 		if (!autoriserDepart(caseD))
 			System.out.println("Choissisez une nouvelle case de départ.");
 		else
@@ -197,8 +197,8 @@ public class Grille {
 		 * - l'ordonne et l'abscisse de la bille de départ : ordD et absD
 		 * - l'ordonne et l'abscisse de la bille d'arrivee : ordA et absA*/
 
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
-		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
+		plateau1.unCoup(plateau1, 6, 4, 4, 4);
+		plateau1.unCoup(plateau1, 33, 2, 3, 4);
 		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
 		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);
 		//plateau1.unCoup(plateau1, ordD, absD, ordA, absA);

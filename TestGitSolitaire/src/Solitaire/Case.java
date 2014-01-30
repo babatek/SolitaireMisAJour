@@ -4,6 +4,7 @@ public class Case{
 	
 	private int abscisse, ordonne, valeur;
 	public static final int OCCUPE = 1, LIBRE = 0, INTERDIT = -1;
+	public static final String caseInterdite = "   ", caseLibre = "[ ]", caseOccupe = "[X]";
 	
 	public int getAbscisse()
 	{
@@ -60,12 +61,12 @@ public class Case{
 	public String toString()
     {
 		if (valeur == INTERDIT)
-				return "   ";
+				return caseInterdite;
 		else
 			if (valeur == LIBRE)
-				return "[ ]";
+				return caseLibre;
 			else
-				return "[X]";
+				return caseOccupe;
     }	
 
 	public static void main(String[] args) 
