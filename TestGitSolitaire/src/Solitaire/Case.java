@@ -4,7 +4,7 @@ public class Case{
 	
 	private int abscisse, ordonne, valeur;
 	public static final int OCCUPE = 1, LIBRE = 0, INTERDIT = -1;
-	public static final String caseInterdite = "   ", caseLibre = "[ ]", caseOccupe = "[X]";
+	public static final String caseInterdite = "   ", caseLibre = "[ ]", caseOccupe = "[O]";
 	
 	public int getAbscisse()
 	{
@@ -31,9 +31,19 @@ public class Case{
 		return LIBRE;
 	}
 	
+	public void setLibre()
+	{
+		setValeur(LIBRE);	
+	}
+	
 	public int getOccupe()
 	{
 		return OCCUPE;
+	}
+	
+	public void setOccupe()
+	{
+		setValeur(OCCUPE);
 	}
 	
 	public int getInterdit()

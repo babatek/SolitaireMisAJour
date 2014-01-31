@@ -148,25 +148,29 @@ public class Grille {
 			}
 		}
 	}
-
+	
+	public void affecteCase(Case caseX)
+	{
+		String[][] plateau1 = this.getPlateau();
+		plateau1[caseX.getAbscisse()][caseX.getOrdonne()] = caseX.toString();
+		this.setPlateau(plateau1);
+	}
+	
 	public Grille deplacement(Grille plateau, Case caseD, Case caseA)
 	{
 		String[][] plateau2 = null;
 		Grille erreurPlateau = new Grille(plateau2);
-		if (this.autoriserDeplacement(this, caseD, caseA))
+		if (plateau.autoriserDeplacement(plateau, caseD, caseA))
 		{
 			billeRestante--;
-			String[][] plateau1 = this.getPlateau();
 			Case caseM = plateau.caseDuMilieu(plateau, caseD, caseA);
-			/*caseD.setLibre();
+			caseD.setLibre();
 			caseA.setOccupe();
-			caseM.setLibre();*/
-			plateau1[case1.getAbscisse()][case1.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
-			plateau1[caseD.getAbscisse()][caseD.getOrdonne()] = plateau1[caseA.getAbscisse()][caseA.getOrdonne()];
-			plateau1[caseA.getAbscisse()][caseA.getOrdonne()] = plateau1[case1.getAbscisse()][case1.getOrdonne()];
-			plateau1[caseM.getAbscisse()][caseM.getOrdonne()] = plateau1[caseD.getAbscisse()][caseD.getOrdonne()];
-			
-			this.setPlateau(plateau1);
+			caseM.setLibre();
+
+			affecteCase(caseD);
+			affecteCase(caseA);
+			affecteCase(caseM);
 			return plateau;
 		}
 		else
@@ -200,7 +204,7 @@ public class Grille {
 		{
 		Case caseD = this.getCase(plateau, ordD, absD);
 		Case caseA = this.getCase(plateau, ordA, absA);
-		if (!autoriserDepart(caseD))
+		if (!autoriserDepart(caseD) || (caseDuMilieu(plateau, caseD, caseA).getValeur() == -1))
 			System.out.println("Choissisez une nouvelle case de départ.");
 		else
 			if (!autoriserArrive(caseD, caseA))
@@ -265,7 +269,7 @@ public class Grille {
 		
 		String[][] plateau = null;
 		Grille plateau1 = new Grille(plateau);
-
+		
 		plateau1.jouer(plateau1);
 	}
 
